@@ -1,12 +1,6 @@
 # ATAC-seq
 ATAC-seq pipeline for snakemake
 
-Dry-run in slurm: 
-	snakemake -s ATAC-seq_pipeline -j 20 --cluster-config /athena/khuranalab/scratch/kac2053/code/cluster.json --cluster "sbatch -p {cluster.partition} -n {cluster.n}  -t {cluster.time} -e {params.out} -o {params.err}" --latency-wait 60 --rerun-incomplete -np
-
-Run: 
-	replace above -np with -k
-
 Steps: 
 1) fastqc - to check quality on fastq.gz files
 
