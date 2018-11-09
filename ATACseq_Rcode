@@ -1,0 +1,11 @@
+rule ATACseq_Rcode:
+    input: "macs2/" 
+    output: touch("ATACseq_Rmd.done")
+    params: 
+        err="plots/ATACseq_Rcode.stdout", out="plots/ATACseq_Rcode.stderr", name="ATACseq_Rcode"
+    message: 
+        """--- ATAC-seq R-markdown"""
+    script:
+        "/athena/khuranalab/scratch/kac2053/code/snakemake_files/DESeq_for_ATACseq.Rmd"
+
+# https://snakemake.readthedocs.io/en/stable/snakefiles/rules.html
