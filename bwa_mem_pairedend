@@ -1,0 +1,12 @@
+rule bwa_mem_pairedend:
+    input: 
+        r1 = "trim_galore/{sample}_1_val_1.fq.gz", r2 = "trim_galore/{sample}_2_val_2.fq.gz"
+    output:
+        "sam/{sample}.sam"
+    params: 
+        err="sam/{sample}_sam.stderr", out="sam/{sample}_sam.stdout", name="bwamem"
+    threads: 16
+    message: 
+        """--- Running bwa mem."""
+    shell:
+        "bwa mem -t {threads} /athena/khuranalab/scratch/kac2053/ref/bwaindex/hg19.fa {input.r1} {input.r2} > {output}"

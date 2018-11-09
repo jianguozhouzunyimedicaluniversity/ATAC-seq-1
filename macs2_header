@@ -1,0 +1,11 @@
+rule macs2_header:
+    input: 
+        "macs2/{sample}_peaks.narrowPeak"
+    output:
+        "macs2/{sample}_peaks_header.narrowPeak"
+    params: 
+        err="macs2/{sample}_macs2header.stderr", out="macs2/{sample}_macs2header.stdout", name="macs2_header"
+    message: 
+        """--- macs2 header"""
+    shell:
+        "echo -e 'chrom\tstart\tend\tname\tscore\tstrand\tsignalvalue\tpval\tqval\tpeak' | cat - {input} > {output}"

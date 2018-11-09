@@ -1,0 +1,75 @@
+"""
+Author: Karen Chu
+Affiliation: Weill Cornell Medicine
+Aim: Pipeline for ATAC-seq data.
+Date: 11/09/2018
+
+Dry-run in slurm: 
+	snakemake -s ATAC-seq_pipeline -j 20 --cluster-config /athena/khuranalab/scratch/kac2053/code/cluster.json --cluster "sbatch -p {cluster.partition} -n {cluster.n}  -t {cluster.time} -e {params.out} -o {params.err}" --latency-wait 60 --rerun-incomplete -np
+Run: 
+	replace above -np with -k
+
+Latest modification: 
+  - added picard
+
+Note:
+  Snakemake flags: https://snakemake.readthedocs.io/en/stable/executable.html
+  	- "-j": number of jobs submitted at the same time
+  	- "-n": dryrun (or --dryrun)
+  	- "-p": print resulting shell command for illustration
+  	- "--rerun-incomplete": re-run all jobs the output of which is recognized as incomplete
+  	- "-k": Go on with independent jobs if a job fails
+  	- "--reason"/"-r": Print the reason for each executed rule
+    - "--unlock": unlock a directory; Remove after unlocking to run snakemake.
+    - "--latency-wait": Wait given seconds if an output file of a job is not present after the job finished. This helps if your filesystem suffers from latency (default 5). Default: 5
+    - "--use-conda": automatically create required environments and activate them before a job is executed
+
+  Slurm flags:
+  	- "--error"
+  	- "--output"
+  
+  Pipeline:
+    - Snakemake will not create missing folders and mkdir will not work in the shell. You must make the directories yourself before running.
+"""
+
+##--------------------------------------------------------------------------------------##
+
+# ENVIRONMENT PATHS: User must change directory below to their samples.
+
+REF = '/athena/khuranalab/scratch/kac2053/ref/bwaindex/hg19.fa'
+WD = '/athena/khuranalab/scratch/kac2053/projects/ctDNA/GSE118207'
+workdir: WD
+
+##--------------------------------------------------------------------------------------##
+
+# SAMPLES:
+
+SAMPLES, = glob_wildcards("fastq/{sample}_1.fastq.gz")
+#SAMPLES, = { 'P10_1' } # For troubleshooting, test on one sample.
+#SAMPLES = 'B7_1 B7_Tumor'.split() # For troubleshooting more than one sample.
+##--------------------------------------------------------------------------------------##
+
+rule all:
+    input: expand('macs2/{sample}_peaks_header.narrowPeak', sample=SAMPLES), expand('bam/{sample}_sorted.bam.bai', sample=SAMPLES), expand('analysis_fastqc/fastqc_bam/{sample}.fastqc.html', sample=SAMPLES)
+	
+include: "fastqc"
+
+include: "trim_galore_pairedend"
+
+include: "bwa_mem_pairedend"
+
+include: "samtobam"
+
+include: "mapped_bam"
+
+include: "sort_bam"
+
+include: "index_bam_bai"
+
+include: "fastqc_bam"
+
+include: "macs2"
+
+include: "macs2_header"
+
+include: "ATACseq_Rcode"

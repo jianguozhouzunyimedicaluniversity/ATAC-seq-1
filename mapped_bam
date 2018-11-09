@@ -1,0 +1,13 @@
+rule mapped_bam:
+    input: 
+        "bam/{sample}.bam"
+    output:
+        "bam/{sample}_mapped.bam"
+    params: 
+        err="bam/{sample}_mapped.stderr", out="bam/{sample}_mapped.stdout", name="mapped_bam"
+    message: 
+        """--- Removing unmapped reads from bam."""
+    shell:
+        "samtools view -b -F 4 {input} > {output}"
+
+# Remove unmapped reads

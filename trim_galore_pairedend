@@ -1,0 +1,13 @@
+rule trim_galore_pairedend:
+    input: 
+        r1 = "fastq/{sample}_1.fastq.gz",
+        r2 = "fastq/{sample}_2.fastq.gz"
+    output:
+        "trim_galore/{sample}_1_val_1.fq.gz", 
+        "trim_galore/{sample}_2_val_2.fq.gz"
+    params: 
+        err="trim_galore/{sample}_trimgalorepairedend.stderr", out="trim_galore/{sample}_trimgalorepairedend.stdout", name="trim_galore"
+    message: 
+        """--- Trimming with trim_galore."""
+    shell:
+        "trim_galore --paired --gzip -o trim_galore/ --nextera {input.r1} {input.r2}"

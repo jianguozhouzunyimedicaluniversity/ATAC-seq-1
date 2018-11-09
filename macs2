@@ -1,0 +1,13 @@
+rule macs2:
+    input: 
+        "bam/{sample}_sorted.bam"
+    output:
+        "macs2/{sample}_peaks.narrowPeak"
+    #conda:
+        #"/athena/khuranalab/scratch/kac2053/envs/py2.yml"
+    params: 
+        err="macs2/{sample}_macs2.stderr", out="macs2/{sample}_macs2.stdout", name="macs2"
+    message: 
+        """--- macs2"""
+    shell:
+        "/home/kac2053/miniconda3/envs/py2.7/bin/macs2 callpeak -t {input} -f BAMPE --outdir macs2/ --name {wildcards.sample} -g hs"

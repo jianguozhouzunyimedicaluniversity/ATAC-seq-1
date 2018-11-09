@@ -1,0 +1,16 @@
+rule sort_bam:
+    input: 
+        "bam/{sample}_mapped.bam"
+    output:
+        "bam/{sample}_sorted.bam"
+    params: 
+        err="bam/{sample}_sort.stderr", out="bam/{sample}_sort.stdout", name="sorted_bam"
+    threads: 8
+    message: 
+        """--- Sorting bam."""
+    shell:
+        "samtools sort -@ {threads} -m 2G {input} > {output}"
+
+# sort: sorts reads by chromosome and region
+# -@: threads
+# -m: memory that each thread will have

@@ -1,0 +1,13 @@
+rule fastqc:
+    input: 
+        r1 = "fastq/{sample}_1.fastq.gz",
+        r2 = "fastq/{sample}_2.fastq.gz"
+    output:
+        "analysis_fastqc/{sample}_1.fastqc.html",
+        "analysis_fastqc/{sample}_2.fastqc.html"
+    params: 
+        err="analysis_fastqc/{sample}_fastqc.stderr", out="analysis_fastqc/{sample}_fastqc.stdout", name="fastqc"
+    message: 
+        """--- Quality check of raw data with Fastqc."""
+    shell:
+        "/athena/khuranalab/scratch/kac2053/src/FastQC {input.r1} -o analysis_fastqc; fastqc {input.r2} -o analysis_fastqc"

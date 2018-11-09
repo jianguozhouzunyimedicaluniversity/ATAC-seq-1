@@ -1,0 +1,11 @@
+rule samtobam:
+    input: 
+        "sam/{sample}.sam"
+    output:
+        "bam/{sample}.bam"
+    params: 
+        err="bam/{sample}_samtobam.stderr", out="bam/{sample}_samtobam.stdout", name="samtobam"
+    message: 
+        """--- Sorting and indexing sam to bam. Keeping aligned reads."""
+    shell:
+        "samtools view -S -b {input} > {output}"

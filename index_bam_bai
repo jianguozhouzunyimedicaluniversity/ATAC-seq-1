@@ -1,0 +1,13 @@
+rule index_bam_bai:
+    input: 
+        "bam/{sample}_sorted.bam"
+    output:
+        "bam/{sample}_sorted.bam.bai"
+    params: 
+        err="bam/{sample}_bai.stderr", out="bam/{sample}_bai.stdout", name="index_bam_bai"
+    message: 
+        """--- Indexing bam."""
+    shell:
+        "samtools index {input} > {output}"
+
+# index: builds an index that will look for a region you look for
