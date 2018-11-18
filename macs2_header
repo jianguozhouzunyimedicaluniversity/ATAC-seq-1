@@ -1,10 +1,10 @@
 rule macs2_header:
     input: 
-        "macs2/{sample}_peaks.narrowPeak"
+        "macs2/broadpeak/{sample}_peaks.broadPeak"
     output:
-        "macs2/{sample}_peaks_header.narrowPeak"
+        "macs2/broadpeak/{sample}_peaks_header.broadPeak"
     params: 
-        err="macs2/{sample}_macs2header.stderr", out="macs2/{sample}_macs2header.stdout", name="macs2_header"
+        err="macs2/broadpeak/{sample}_macs2header.stderr", out="macs2/broadpeak/{sample}_macs2header.stdout", name="macs2_header"
     message: 
         """--- macs2 header"""
     shell:

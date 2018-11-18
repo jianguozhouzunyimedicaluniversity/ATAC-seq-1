@@ -1,13 +1,23 @@
 rule macs2:
     input: 
-        "bam/{sample}_sorted.bam"
+        "bam/{sample}_rmdups.bam"
     output:
-        "macs2/{sample}_peaks.narrowPeak"
+        "macs2/broadpeak/{sample}_peaks.broadPeak", "macs2/broadpeak/{sample}_broad_summits.bed"
+        #"macs2/{sample}_peaks.narrowPeak", "macs2/{sample}_summits.bed"
     #conda:
         #"/athena/khuranalab/scratch/kac2053/envs/py2.yml"
     params: 
-        err="macs2/{sample}_macs2.stderr", out="macs2/{sample}_macs2.stdout", name="macs2"
+        err="macs2/broadpeak/{sample}_macs2.stderr", out="macs2/broadpeak/{sample}_macs2.stdout", name="macs2"
     message: 
         """--- macs2"""
     shell:
-        "/home/kac2053/miniconda3/envs/py2.7/bin/macs2 callpeak -t {input} -f BAMPE --outdir macs2/ --name {wildcards.sample} -g hs"
+        "/home/kac2053/miniconda3/envs/py2.7/bin/macs2 callpeak -t {input} -f BAMPE --outdir macs2/ --name {wildcards.sample} --broad -g hs --keep-dup=1"
+
+# Broad peak calling:
+#/home/kac2053/miniconda3/envs/py2.7/bin/macs2 callpeak -t {input} -f BAMPE --outdir macs2/ --name {wildcards.sample} --broad -g hs --keep-dup=1
+
+# Default peak calling:
+#/home/kac2053/miniconda3/envs/py2.7/bin/macs2 callpeak -t {input} -f BAMPE --outdir macs2/ --name {wildcards.sample} -g hs --keep-dup=1"
+
+# No model (?)
+#/home/kac2053/miniconda3/envs/py2.7/bin/macs2 callpeak -t SRR7651675_rmdups.bam -f BAMPE --outdir ../ --name SRR7651675 -g hs --nomodel

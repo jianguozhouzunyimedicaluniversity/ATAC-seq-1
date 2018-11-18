@@ -2,18 +2,15 @@
 Author: Karen Chu
 Affiliation: Weill Cornell Medicine
 Aim: Pipeline for ATAC-seq data.
-Date: 11/09/2018
+Date: 11/02/2018
 
 Dry-run in slurm: 
-	snakemake -s ATAC-seq_pipeline -j 5 --cluster-config /athena/khuranalab/scratch/kac2053/code/cluster.json --cluster "sbatch -p {cluster.partition} -n {cluster.n}  -t {cluster.time} -e {params.out} -o {params.err}" --latency-wait 60 -np
+	snakemake -s ATAC-seq_pipeline_GSE47753 -j 20 --cluster-config /athena/khuranalab/scratch/kac2053/code/cluster.json --cluster "sbatch -p {cluster.partition} -n {cluster.n}  -t {cluster.time} -e {params.out} -o {params.err}" --latency-wait 60 -np
 Run: 
 	replace above -np with -k
 
-Build dag:
-  snakemake -s ATAC-seq_pipeline --dag macs2/SRR7651675_peaks_header.narrowPeak | dot -Tpdf > ATACseq_dag.pdf # dot -Tpng > ATACseq_dag.png
-
 Latest modification: 
-  - added macs2
+  - added picard
 
 Note:
   Snakemake flags: https://snakemake.readthedocs.io/en/stable/executable.html
@@ -25,7 +22,6 @@ Note:
   	- "--reason"/"-r": Print the reason for each executed rule
     - "--unlock": unlock a directory; Remove after unlocking to run snakemake.
     - "--latency-wait": Wait given seconds if an output file of a job is not present after the job finished. This helps if your filesystem suffers from latency (default 5). Default: 5
-    - "--use-conda": automatically create required environments and activate them before a job is executed
 
   Slurm flags:
   	- "--error"
@@ -40,7 +36,7 @@ Note:
 # ENVIRONMENT PATHS: User must change directory below to their samples.
 
 REF = '/athena/khuranalab/scratch/kac2053/ref/bwaindex/hg19.fa'
-WD = '/athena/khuranalab/scratch/kac2053/projects/ctDNA/GSE118207'
+WD = '/athena/khuranalab/scratch/kac2053/projects/ctDNA/GSE47753'
 workdir: WD
 
 ##--------------------------------------------------------------------------------------##
@@ -53,8 +49,7 @@ SAMPLES, = glob_wildcards("fastq/{sample}_1.fastq.gz")
 ##--------------------------------------------------------------------------------------##
 
 rule all:
-    input: expand('macs2/broadpeak/{sample}.bw', sample=SAMPLES), expand('macs2/broadpeak/{sample}_peaks_header.broadPeak', sample=	SAMPLES), expand('bam/{sample}_rmdups.bam.bai', sample=SAMPLES)
-	# expand('../plots/DESeq_ATACseq.html')
+    input: expand('macs2/broadpeak/{sample}.bw', sample=SAMPLES), expand('macs2/broadpeak/{sample}_peaks_header.broadPeak', sample= SAMPLES), expand('bam/{sample}_rmdups.bam.bai', sample=SAMPLES)
 	
 include: "fastqc"
 
